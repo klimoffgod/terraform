@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'peoxmox'}
+  agent { label 'proxmox'}
   options {
     skipDefaultCheckout(true)
   }
