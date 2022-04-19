@@ -1,40 +1,24 @@
-#!/bin/bash
- 
-TERRAFORM_VERSION="0.11.1"
- 
-if [ -z ${TERRAFORM_BIN_PATH+x} ]; then
-	TERRAFORM_BIN_PATH="$HOME/.terraform";
-fi
- 
-platform='unknown'
-unamestr=`uname`
-if [[ "$unamestr" == 'Linux' ]]; then
-   platform='linux'
-elif [[ "$unamestr" == 'FreeBSD' ]]; then
-   platform='freebsd'
-elif [[ "$unamestr" == 'Darwin' ]]; then
-   platform='darwin'
-fi
- 
-arch="unknown"
-unamestr=`uname -m`
-if [[ "$unamestr" == 'x86_64' ]]; then
-   arch='amd64'
-elif [[ "$unamestr" == 'i686' ]]; then
-   arch='386'
-fi
- 
-TERRAFORM_URL="https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION"_"$platform"_"$arch".zip
- 
-TERRAFORM_PATH="$TERRAFORM_BIN_PATH/$TERRAFORM_VERSION"
-TERRAFORM_CMD="$TERRAFORM_PATH/terraform"
-if ! type "$TERRAFORM_CMD" > /dev/null 2>&1; then
-	echo "Downloading $TERRAFORM_URL"
-	mkdir -p "$TERRAFORM_PATH"
-	curl -s "$TERRAFORM_URL" -o $TERRAFORM_PATH.zip
-	cd $TERRAFORM_PATH && unzip $TERRAFORM_PATH.zip && cd -
-fi
- 
-$TERRAFORM_CMD $@
- 
-#
+#!/bin/bash 
+
+# based on https://tfswitch.warrensbox.com/Continuous-Integration/
+
+echo "Installing tfswitch locally"
+
+# Get the installer on to your machine
+wget -N -c https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh
+
+# Make installer executable
+chmod 777 install.sh
+
+# Install tfswitch in a location you have permission
+./install.sh -b $(pwd)/.bin
+
+# set custom bin path
+CUSTOMBIN=$(pwd)/.bin
+
+#Add custom bin path to PATH environment
+export PATH=$CUSTOMBIN:$PATH
+
+$CUSTOMBIN/tfswitch -b $CUSTOMBIN/terraform
+
+terraform $*
