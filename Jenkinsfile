@@ -1,38 +1,26 @@
 pipeline {
-  agent { label 'proxmox'}
-  options {
-    skipDefaultCheckout(true)
-  }
-  stages{
-    stage('clean workspace') {
-      steps {
-        cleanWs()
-      }
+    agent { label 'proxmox'}
+    tools {
+        terraform 'terraform'
     }
-    stage('checkout') {
-      steps {
-        checkout scm
-      }
+    
+    triggers {
+        pollSCM '* * * * *'
     }
-    stage('Terraform Init') {
-      steps {
-        sh "${env.TERRAFORM_HOME}/terraform init -input=false"
-      }
+    stages {
+        stage('Terraform init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform apply') {
+            steps {
+                sh 'terraform apply --auto-approve'
+            }
+        }
     }
-    stage('Terraform Plan') {
-      steps {
-        sh "${env.TERRAFORM_HOME}/terraform plan -out=tfplan -input=false -var-file='dev.tfvars'"
-      }
-    }
-    stage('Terraform Apply') {
-      steps {
-        input 'Apply Plan'
-        sh "${env.TERRAFORM_HOME}/terraform apply -input=false tfplan"
-      }
-    }
-  }
-  post {
-    always {
+    post {
+    success {
       cleanWs()
     }
   }
