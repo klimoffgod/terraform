@@ -33,8 +33,8 @@ variable "vm_cpu" {
     default = "2"
 }
 
-variable "macaddr" {
-    description = "mac_address"
-    default = "92:E8:65:B4:7C:00"
+variable "vmid" {
+    description = "vmid"
+    default = "15[1-9]"
 }
 
