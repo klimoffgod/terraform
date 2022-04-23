@@ -35,6 +35,6 @@ variable "vm_cpu" {
 
 variable "vmid" {
     description = "vmid"
-    default = "15[1-9]"
+    default = "150"
 }
 
