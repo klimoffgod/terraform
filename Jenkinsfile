@@ -3,7 +3,6 @@ pipeline {
     tools {
         terraform 'terraform'
     }
-    
     triggers {
         pollSCM '* * * * *'
     }
@@ -18,10 +17,22 @@ pipeline {
                 sh 'terraform apply --auto-approve'
             }
         }
+        stage('git clone ansible and  get IP address VM and run ansible script') {
+            steps {
+                sh '''
+                git clone https://github.com/klimoffgod/ansible.git
+                cd ansible
+                ls -la
+                sh get_ip_vm
+                ansible-playbook Playbook.yml -i hosts -v
+                cd .. && rm -r ansible 
+                '''
+                }
+        }
     }
     post {
     success {
-      cleanWs()
-    }
-  }
+        cleanWs()
+        } 
+    }    
 }
