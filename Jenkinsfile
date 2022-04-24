@@ -24,7 +24,7 @@ pipeline {
                 cd ansible
                 ls -la
                 sh get_ip_vm
-                ansible-playbook Playbook.yml -i hosts -vvvvvvvvvvv
+                ansible-playbook Playbook.yml -i hosts
                 '''
                 }
         }
